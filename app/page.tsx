@@ -55,9 +55,6 @@ export default function Home(){
   const [loaded,setLoaded]=useState(false);
   const [itemId,setItemId]=useState('');
   const [startedAt,setStartedAt]=useState(Date.now());
-  const [engine,setEngine]=useState<StudyState>(emptyState());
-  const [loaded,setLoaded]=useState(false);
-  const [itemId,setItemId]=useState('');
 
   useEffect(()=>{try{const raw=localStorage.getItem('kronia-study-engine');if(raw){const s=ensureState(JSON.parse(raw));setEngine(s);setXp(s.xp);setStreak(s.streak);setMastery(overallMastery(s,subject));}}catch{}setLoaded(true)},[]);
  useEffect(()=>{if(loaded)try{localStorage.setItem('kronia-study-engine',JSON.stringify(engine))}catch{}},[engine,loaded]);
