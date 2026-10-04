@@ -69,4 +69,5 @@ export type AnswerResult = {
   score:number;
   errorType?:Attempt['errorType'];
   feedback:string;
+  transcriptScore?:number;
 };
