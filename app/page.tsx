@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 
 type Subject='english'|'math';
+type SpeechRecognitionLike={lang:string;interimResults:boolean;maxAlternatives:number;onresult:(e:any)=>void;onerror:()=>void;start:()=>void};
 type ChoiceItem={kind:'choice';title:string;text:string;options:string[];answer:number;explanation:string};
 type TextItem={kind:'calc'|'explain';title:string;text:string;answer?:string;hint:string};
 type VoiceItem={kind:'listen'|'speak';title:string;text:string;hint:string};
@@ -64,8 +65,8 @@ export default function Home(){
   };
 
   const recognize=()=>{
-    const SR=(window as Window & {SpeechRecognition?:new()=>SpeechRecognition;webkitSpeechRecognition?:new()=>SpeechRecognition}).SpeechRecognition
-      ||(window as Window & {webkitSpeechRecognition?:new()=>SpeechRecognition}).webkitSpeechRecognition;
+    const SR=(window as Window & {SpeechRecognition?:new()=>SpeechRecognitionLike;webkitSpeechRecognition?:new()=>SpeechRecognitionLike}).SpeechRecognition
+      ||(window as Window & {webkitSpeechRecognition?:new()=>SpeechRecognitionLike}).webkitSpeechRecognition;
     if(!SR){setFeedback('Reconhecimento de voz não está disponível neste navegador. Use Edge/Chrome ou pratique a frase em voz alta.');return;}
     const r=new SR();r.lang='en-US';r.interimResults=false;r.maxAlternatives=3;
     r.onresult=(e:SpeechRecognitionEvent)=>{
@@ -139,7 +140,7 @@ function Dashboard({subject,setSubject,mastery,xp,streak,onStudy}:{subject:Subje
 
 function Study({current,step,progress,subject,setSubject,choice,setChoice,input,setInput,transcript,listening,feedback,speak,recognize,submit,next,reset}:{current:Item;step:number;progress:number;subject:Subject;setSubject:(s:Subject)=>void;choice:number|null;setChoice:(v:number|null)=>void;input:string;setInput:(v:string)=>void;transcript:string;listening:boolean;feedback:string;speak:()=>void;recognize:()=>void;submit:()=>void;next:()=>void;reset:()=>void}){
   return <div className="study"><div className="studyHead"><div><small>SESSÃO {subject==='english'?'INGLÊS':'MATEMÁTICA'} · {step+1}</small><h1>{current.title}</h1></div><div style={{display:'flex',gap:8}}><button className="ghost" onClick={()=>setSubject(subject==='english'?'math':'english')}>Trocar matéria</button><button className="ghost" onClick={reset}><RotateCcw/> Reiniciar</button></div></div><div className="sessionProgress"><i style={{width:`${Math.max(8,progress)}%`}}/></div>
-  <div className="exercise"><div className="exerciseTag">{current.kind==='speak'?'FALA':current.kind==='listen'?'ESCUTA':current.kind==='calc'?'CÁLCULO':'PRÁTICA'}</div><h2>{current.text}</h2><p className="hint">{current.hint}</p>
+  <div className="exercise"><div className="exerciseTag">{current.kind==='speak'?'FALA':current.kind==='listen'?'ESCUTA':current.kind==='calc'?'CÁLCULO':'PRÁTICA'}</div><h2>{current.text}</h2><p className="hint">{'hint' in current ? current.hint : current.explanation}</p>
   {current.kind==='listen'&&<button className={`listen ${listening?'playing':''}`} onClick={speak}><Volume2/> {listening?'Reproduzindo…':'Ouvir frase'}</button>}
   {current.kind==='speak'&&<><div className="voiceBox"><div className="wave"><i/><i/><i/><i/><i/><i/><i/></div><button className="mic" onClick={recognize}><Mic/> Falar agora</button></div>{transcript&&<div className="transcript">Reconhecido: “{transcript}”</div>}</>}
   {current.kind==='choice'&&<div className="options">{current.options.map((o,i)=><button key={o} className={choice===i?'chosen':''} onClick={()=>setChoice(i)}><span>{String.fromCharCode(65+i)}</span>{o}</button>)}</div>}
