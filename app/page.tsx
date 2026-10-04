@@ -1,6 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { ITEMS, getItem } from '../lib/content';
+import { applyAttempt, emptyState, ensureState, evaluateItem, getSkill, masteryLabel, overallMastery, selectNextItem } from '../lib/engine';
+import type { StudyItem, StudyState } from '../lib/types';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   BarChart3, Brain, BookOpen, Calculator, Check, ChevronRight, Clock3,
@@ -36,13 +39,16 @@ export default function Home(){
   const [xp,setXp]=useState(640);
   const [streak,setStreak]=useState(7);
   const [mastery,setMastery]=useState(72);
-  const [choice,setChoice]=useState<number|null>(null);
+  const [choice,setChoice]=useState<number|null>(null); const [startedAt,setStartedAt]=useState(Date.now());
   const [input,setInput]=useState('');
   const [feedback,setFeedback]=useState('');
   const [transcript,setTranscript]=useState('');
   const [listening,setListening]=useState(false);
 
-  useEffect(()=>{
+  useEffect(()=>{try{const raw=localStorage.getItem('kronia-study-engine');if(raw){const s=ensureState(JSON.parse(raw));setEngine(s);setXp(s.xp);setStreak(s.streak);setMastery(overallMastery(s,subject));}}catch{}setLoaded(true)},[]);
+ useEffect(()=>{if(loaded)try{localStorage.setItem('kronia-study-engine',JSON.stringify(engine))}catch{}},[engine,loaded]);
+ useEffect(()=>{setMastery(overallMastery(engine,subject));},[engine,subject]);
+ useEffect(()=>{
     try{
       const raw=localStorage.getItem('kronia-study-progress');
       if(raw){const d=JSON.parse(raw);if(typeof d.xp==='number')setXp(d.xp);if(typeof d.streak==='number')setStreak(d.streak);if(typeof d.mastery==='number')setMastery(d.mastery);}
