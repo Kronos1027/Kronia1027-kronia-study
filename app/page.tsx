@@ -30,7 +30,14 @@ const content:Record<Subject,Item[]>={
   ]
 };
 
-const normalize=(s:string)=>s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
+const normalize=(s:string)=>s.toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9 ]/g,' ').replace(/\\s+/g,' ').trim();
+const toLegacy=(item:StudyItem):Item=>{
+ if(item.kind==='choice')return {kind:'choice',title:item.title,text:item.prompt,options:item.options??[],answer:item.answer as number};
+ if(item.kind==='input')return {kind:'calc',title:item.title,text:item.prompt,answer:String(item.answer??''),hint:item.hint??''};
+ if(item.kind==='explain')return {kind:'explain',title:item.title,text:item.prompt,hint:item.hint??''};
+ if(item.kind==='listen')return {kind:'listen',title:item.title,text:item.target??item.prompt,hint:item.hint??''};
+ return {kind:'speak',title:item.title,text:item.target??item.prompt,hint:item.hint??''};
+};
 
 export default function Home(){
   const [subject,setSubject]=useState<Subject>('english');
@@ -43,7 +50,7 @@ export default function Home(){
   const [input,setInput]=useState('');
   const [feedback,setFeedback]=useState('');
   const [transcript,setTranscript]=useState('');
-  const [listening,setListening]=useState(false);
+  const [listening,setListening]=useState(false);\n  const [engine,setEngine]=useState<StudyState>(emptyState());\n  const [loaded,setLoaded]=useState(false);\n  const [itemId,setItemId]=useState('');\n  const [startedAt,setStartedAt]=useState(Date.now());
   const [engine,setEngine]=useState<StudyState>(emptyState());
   const [loaded,setLoaded]=useState(false);
   const [itemId,setItemId]=useState('');
