@@ -44,6 +44,9 @@ export default function Home(){
   const [feedback,setFeedback]=useState('');
   const [transcript,setTranscript]=useState('');
   const [listening,setListening]=useState(false);
+  const [engine,setEngine]=useState<StudyState>(emptyState());
+  const [loaded,setLoaded]=useState(false);
+  const [itemId,setItemId]=useState('');
 
   useEffect(()=>{try{const raw=localStorage.getItem('kronia-study-engine');if(raw){const s=ensureState(JSON.parse(raw));setEngine(s);setXp(s.xp);setStreak(s.streak);setMastery(overallMastery(s,subject));}}catch{}setLoaded(true)},[]);
  useEffect(()=>{if(loaded)try{localStorage.setItem('kronia-study-engine',JSON.stringify(engine))}catch{}},[engine,loaded]);
@@ -60,6 +63,7 @@ export default function Home(){
 
   const items=content[subject];
   const current=items[step%items.length];
+  const selected=getItem(itemId);
   const progress=Math.round(((step%items.length)/items.length)*100);
 
   const speak=()=>{
@@ -88,6 +92,7 @@ export default function Home(){
   };
 
   const submit=()=>{
+    if(selected){const result=evaluateItem(selected,{choice:choice??undefined,value:input,speech:transcript});const updated=applyAttempt(engine,selected,result,{confidence:.6,responseSeconds:Math.max(2,Math.round((Date.now()-startedAt)/1000)),attempts:1,usedHint:false});setEngine(updated);setXp(updated.xp);setStreak(updated.streak);setFeedback((result.correct?'✓ ':'')+result.feedback);return;}
     let ok=false;
     if(current.kind==='choice')ok=choice===current.answer;
     if(current.kind==='calc')ok=normalize(input).replace(',','.')===normalize(current.answer??'').replace(',','.');
