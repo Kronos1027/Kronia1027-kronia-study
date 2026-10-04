@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   BarChart3, Brain, BookOpen, Calculator, Check, ChevronRight, Clock3,
@@ -93,8 +93,8 @@ export default function Home(){
 
   const reset=()=>{setStep(0);setChoice(null);setInput('');setTranscript('');setFeedback('');};
 
-  return <main>
-    <div className="orb orbA"/><div className="orb orbB"/><div className="grid"/>
+  return <main className="kronia-app">
+    <div className="orb orbA"/><div className="orb orbB"/><div className="grid"/><div className="particles">{Array.from({length:18},(_,i)=><i key={i} style={{animationDelay:`${i*-.7}s`,left:`${(i*17)%100}%`,top:`${(i*31)%100}%`}}/> )}</div>
     <header>
       <div className="brand"><div className="logo"><Sparkles size={20}/></div><div><b>KRONIA</b><span>STUDY ENGINE</span></div></div>
       <div className="topstats"><span><Flame size={16}/> {streak} dias</span><span><Target size={16}/> {xp} XP</span></div>
@@ -125,9 +125,9 @@ export default function Home(){
 }
 
 function Dashboard({subject,setSubject,mastery,xp,streak,onStudy}:{subject:Subject;setSubject:(s:Subject)=>void;mastery:number;xp:number;streak:number;onStudy:()=>void}){
-  return <><div className="hero"><div><div className="eyebrow"><span className="pulse"/> MOTOR ADAPTATIVO ATIVO</div><h1>Aprenda de verdade<span>.</span></h1><p>O Kronia alterna recuperação, produção e transferência. Um acerto isolado não é tratado como domínio.</p><button className="primary" onClick={onStudy}><Play size={18}/> Começar sessão <ChevronRight size={17}/></button></div><div className="core"><div className="coreRing r1"/><div className="coreRing r2"/><div className="coreCenter"><Brain size={34}/><small>FOCO</small></div><div className="node n1"/><div className="node n2"/><div className="node n3"/></div></div>
+  return <><div className="hero"><div><div className="eyebrow"><span className="pulse"/> MOTOR ADAPTATIVO ATIVO</div><h1>Aprenda de verdade<span>.</span></h1><p>O Kronia alterna recuperação, produção e transferência. Um acerto isolado não é tratado como domínio.</p><button className="primary" onClick={onStudy}><Play size={18}/> Começar sessão <ChevronRight size={17}/></button></div><div className="core"><div className="coreGlow"/><div className="coreRing r1"/><div className="coreRing r2"/><div className="coreCenter"><Brain size={34}/><small>FOCO</small><span className="corePulse"/></div><div className="node n1"/><div className="node n2"/><div className="node n3"/></div></div>
   <div className="switch"><button className={subject==='english'?'sel':''} onClick={()=>setSubject('english')}><span>EN</span> Inglês</button><button className={subject==='math'?'sel':''} onClick={()=>setSubject('math')}><span>∑</span> Matemática</button></div>
-  <div className="cards">
+  <div className="cards" data-animate="stagger">
     <div className="stat"><div className="icon"><Target/></div><b>{mastery}%</b><span>Domínio estimado</span><em>calculado nesta sessão</em></div>
     <div className="stat"><div className="icon"><Clock3/></div><b>4h 35m</b><span>Tempo focado</span><em>+42m hoje</em></div>
     <div className="stat"><div className="icon"><Brain/></div><b>38</b><span>Conceitos em estudo</span><em>revisão espaçada</em></div>
@@ -140,7 +140,7 @@ function Dashboard({subject,setSubject,mastery,xp,streak,onStudy}:{subject:Subje
 
 function Study({current,step,progress,subject,setSubject,choice,setChoice,input,setInput,transcript,listening,feedback,speak,recognize,submit,next,reset}:{current:Item;step:number;progress:number;subject:Subject;setSubject:(s:Subject)=>void;choice:number|null;setChoice:(v:number|null)=>void;input:string;setInput:(v:string)=>void;transcript:string;listening:boolean;feedback:string;speak:()=>void;recognize:()=>void;submit:()=>void;next:()=>void;reset:()=>void}){
   return <div className="study"><div className="studyHead"><div><small>SESSÃO {subject==='english'?'INGLÊS':'MATEMÁTICA'} · {step+1}</small><h1>{current.title}</h1></div><div style={{display:'flex',gap:8}}><button className="ghost" onClick={()=>setSubject(subject==='english'?'math':'english')}>Trocar matéria</button><button className="ghost" onClick={reset}><RotateCcw/> Reiniciar</button></div></div><div className="sessionProgress"><i style={{width:`${Math.max(8,progress)}%`}}/></div>
-  <div className="exercise"><div className="exerciseTag">{current.kind==='speak'?'FALA':current.kind==='listen'?'ESCUTA':current.kind==='calc'?'CÁLCULO':'PRÁTICA'}</div><h2>{current.text}</h2><p className="hint">{'hint' in current ? current.hint : current.explanation}</p>
+  <div className="exercise exerciseGlow"><div className="scanline"/><div className="exerciseTag">{current.kind==='speak'?'FALA':current.kind==='listen'?'ESCUTA':current.kind==='calc'?'CÁLCULO':'PRÁTICA'}</div><h2>{current.text}</h2><p className="hint">{'hint' in current ? current.hint : current.explanation}</p>
   {current.kind==='listen'&&<button className={`listen ${listening?'playing':''}`} onClick={speak}><Volume2/> {listening?'Reproduzindo…':'Ouvir frase'}</button>}
   {current.kind==='speak'&&<><div className="voiceBox"><div className="wave"><i/><i/><i/><i/><i/><i/><i/></div><button className="mic" onClick={recognize}><Mic/> Falar agora</button></div>{transcript&&<div className="transcript">Reconhecido: “{transcript}”</div>}</>}
   {current.kind==='choice'&&<div className="options">{current.options.map((o,i)=><button key={o} className={choice===i?'chosen':''} onClick={()=>setChoice(i)}><span>{String.fromCharCode(65+i)}</span>{o}</button>)}</div>}
