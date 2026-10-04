@@ -50,7 +50,11 @@ export default function Home(){
   const [input,setInput]=useState('');
   const [feedback,setFeedback]=useState('');
   const [transcript,setTranscript]=useState('');
-  const [listening,setListening]=useState(false);\n  const [engine,setEngine]=useState<StudyState>(emptyState());\n  const [loaded,setLoaded]=useState(false);\n  const [itemId,setItemId]=useState('');\n  const [startedAt,setStartedAt]=useState(Date.now());
+  const [listening,setListening]=useState(false);
+  const [engine,setEngine]=useState<StudyState>(emptyState());
+  const [loaded,setLoaded]=useState(false);
+  const [itemId,setItemId]=useState('');
+  const [startedAt,setStartedAt]=useState(Date.now());
   const [engine,setEngine]=useState<StudyState>(emptyState());
   const [loaded,setLoaded]=useState(false);
   const [itemId,setItemId]=useState('');
