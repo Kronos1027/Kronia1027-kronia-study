@@ -46,7 +46,7 @@ export default function Home(){
   const [xp,setXp]=useState(640);
   const [streak,setStreak]=useState(7);
   const [mastery,setMastery]=useState(72);
-  const [choice,setChoice]=useState<number|null>(null); const [startedAt,setStartedAt]=useState(Date.now());
+  const [choice,setChoice]=useState<number|null>(null);
   const [input,setInput]=useState('');
   const [feedback,setFeedback]=useState('');
   const [transcript,setTranscript]=useState('');
