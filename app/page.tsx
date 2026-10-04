@@ -32,7 +32,7 @@ const content:Record<Subject,Item[]>={
 
 const normalize=(s:string)=>s.toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9 ]/g,' ').replace(/\\s+/g,' ').trim();
 const toLegacy=(item:StudyItem):Item=>{
- if(item.kind==='choice')return {kind:'choice',title:item.title,text:item.prompt,options:item.options??[],answer:item.answer as number};
+ if(item.kind==='choice')return {kind:'choice',title:item.title,text:item.prompt,options:item.options??[],answer:item.answer as number,explanation:item.explanation};
  if(item.kind==='input')return {kind:'calc',title:item.title,text:item.prompt,answer:String(item.answer??''),hint:item.hint??''};
  if(item.kind==='explain')return {kind:'explain',title:item.title,text:item.prompt,hint:item.hint??''};
  if(item.kind==='listen')return {kind:'listen',title:item.title,text:item.target??item.prompt,hint:item.hint??''};
