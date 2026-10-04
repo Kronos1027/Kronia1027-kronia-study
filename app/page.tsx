@@ -155,6 +155,12 @@ export default function Home(){
     setView('dashboard');
   };
 
+  const finishSetup = (focus:Subject, minutes:number) => {
+    setSubject(focus);
+    setState(current => ({...current, profile:{...current.profile, focus, dailyMinutes:minutes, onboarded:true}}));
+    begin();
+  };
+
   const resetAll = () => {
     if(!confirm('Apagar todo o progresso salvo neste navegador?')) return;
     setState(emptyState());
@@ -204,6 +210,7 @@ export default function Home(){
         </motion.div>
       </AnimatePresence>
     </section>
+    {!state.profile.onboarded && <Onboarding onDone={finishSetup}/>} 
   </main>;
 }
 
@@ -350,5 +357,25 @@ function SettingsPanel({state,onReset}:{state:StudyState;onReset:()=>void}){
       <div className="learningNote"><ShieldCheck size={18}/><div><b>Privacidade</b><span>As respostas e métricas desta versão não são enviadas para um servidor.</span></div></div>
       <button className="ghost danger" onClick={onReset}>Apagar progresso local</button>
     </div>
+  </div>;
+}
+
+function Onboarding({onDone}:{onDone:(subject:Subject,minutes:number)=>void}){
+  const [focus,setFocus]=useState<Subject>('english');
+  const [minutes,setMinutes]=useState(30);
+  return <div className="modalBackdrop">
+    <motion.div className="onboarding" initial={{opacity:0,scale:.96,y:16}} animate={{opacity:1,scale:1,y:0}} transition={{duration:.25}}>
+      <div className="onboardingOrbit"><div/><div/><Sparkles/></div>
+      <div className="eyebrow"><span className="pulse"/> PRIMEIRO ACESSO</div>
+      <h2>Vamos construir seu mapa.</h2>
+      <p>O Kronia começa sem assumir que você já domina alguma coisa. Escolha uma matéria e uma meta diária; as primeiras atividades servem como ponto de partida.</p>
+      <div className="switch wide">
+        <button className={focus==='english'?'sel':''} onClick={()=>setFocus('english')}><span>EN</span> Inglês</button>
+        <button className={focus==='math'?'sel':''} onClick={()=>setFocus('math')}><span>∑</span> Matemática</button>
+      </div>
+      <label className="rangeLabel">Meta diária <strong>{minutes} min</strong><input type="range" min="10" max="90" step="5" value={minutes} onChange={e=>setMinutes(Number(e.target.value))}/><div className="rangeTicks"><span>10</span><span>45</span><span>90</span></div></label>
+      <div className="learningNote"><ShieldCheck size={18}/><div><b>Sem números inventados</b><span>Seu domínio só aparece depois que o sistema tiver evidências das suas respostas.</span></div></div>
+      <button className="primary" onClick={()=>onDone(focus,minutes)}><Sparkles/> Criar meu plano <ChevronRight/></button>
+    </motion.div>
   </div>;
 }
